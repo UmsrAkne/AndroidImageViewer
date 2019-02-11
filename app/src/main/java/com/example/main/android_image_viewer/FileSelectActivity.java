@@ -27,6 +27,9 @@ public class FileSelectActivity extends AppCompatActivity {
 
         permissionRequest();
 
+        ThumbnailFactory tf = new ThumbnailFactory();
+        tf.resizeFileInDirectory( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+
         //ストレージ内のピクチャーフォルダのパスを取得
         File picDirectory =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File[] files = picDirectory.listFiles();
