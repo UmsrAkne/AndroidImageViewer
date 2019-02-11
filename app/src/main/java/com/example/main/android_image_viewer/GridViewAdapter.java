@@ -39,10 +39,7 @@ public final class GridViewAdapter extends BaseAdapter {
         }
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath , options);
+        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
         imageView.setImageBitmap(bitmap);
 
         return convertView;
