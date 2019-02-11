@@ -34,7 +34,9 @@ public class FileSelectActivity extends AppCompatActivity {
         File picDirectory =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File[] files = picDirectory.listFiles();
 
-        for(File f:files){
+        File[] thumbnails = getFilesDir().listFiles();
+
+        for(File f:thumbnails){
             imageFilePaths.add(f.getAbsolutePath());
         }
 

@@ -8,6 +8,7 @@ import android.os.Environment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 import timber.log.Timber;
 
@@ -19,28 +20,39 @@ public final class ThumbnailFactory {
         File currentDirectory = new File( targetDirectory.getPath() );
         File[] pictureFiles = currentDirectory.listFiles( new FileTypeFilter() );
 
-        for(File f : pictureFiles){
-            Timber.i(f.getPath());
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+        ArrayList<BitmapAndName> bitmaps = new ArrayList<>();
+
+        for(File f:pictureFiles){
+            Bitmap bmp = BitmapFactory.decodeFile( f.getPath() , options );
+            BitmapAndName bitmapAndName = new BitmapAndName();
+            bitmapAndName.bitmap = bmp;
+            bitmapAndName.fileName = f.getName();
+            bitmaps.add( bitmapAndName );
         }
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
-        options.inPreferredConfig = Bitmap.Config.ARGB_4444;
-        Bitmap bitmap = BitmapFactory.decodeFile( pictureFiles[0].getPath() , options);
-
         Context context = AndroidImageViewer.getAppContext();
-        File file = new File( context.getFilesDir().getPath() + "/" + "testImage.jpg" );
-        File internalStorage = context.getFilesDir();
 
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG , 80 ,  fileOutputStream);
-            fileOutputStream.close();
+            for(BitmapAndName bmp : bitmaps){
+                File destination = new File( context.getFilesDir().getPath() + "/" + bmp.fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(destination);
+                bmp.bitmap.compress(Bitmap.CompressFormat.JPEG , 50 ,  fileOutputStream);
+                fileOutputStream.close();
+            }
 
         }catch (Exception e){
             Timber.i("Error" + e.toString());
         }
 
+    }
+
+    private class BitmapAndName{
+        public String fileName;
+        public Bitmap bitmap;
     }
 
     class FileTypeFilter implements FilenameFilter {
