@@ -3,22 +3,17 @@ package com.example.main.android_image_viewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
 
 public final class GridViewAdapter extends BaseAdapter {
-
 
     private LayoutInflater inflater;
     private int layoutId;
