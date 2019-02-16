@@ -18,7 +18,7 @@ public final class ThumbnailFactory {
 
     public void resizeFileInDirectory( File targetDirectory ) {
         File[] files = { targetDirectory };
-        AsyncBitmapDecoder task = new AsyncBitmapDecoder();
+        AsyncBitmapDecoder task = new AsyncBitmapDecoder(false);
         task.execute( files );
     }
 
@@ -36,6 +36,12 @@ public final class ThumbnailFactory {
 
     private class AsyncBitmapDecoder extends android.os.AsyncTask< File , Void ,  Boolean>{
 
+        private Boolean isDoOverwrite = false;
+
+        public AsyncBitmapDecoder( boolean setIsDoOverwrite ) {
+            isDoOverwrite = setIsDoOverwrite;
+        }
+
         @Override
         protected Boolean doInBackground(File... targetDirectory){
 
@@ -48,15 +54,22 @@ public final class ThumbnailFactory {
 
             ArrayList<BitmapAndName> bitmaps = new ArrayList<>();
 
+            Context context = AndroidImageViewer.getAppContext();
+
             for(File f:pictureFiles){
+                if(!isDoOverwrite) {
+                    //後にJpegを出力する場所と同じ場所を調べ、もしファイルが存在すればコンティニューする。
+                    //コンティニューした場合 bitmapsに要素は入らず、次のループで bitmap.compress もされない。
+                    File saveDestination = new File(context.getFilesDir().getPath() + "/" + f.getName());
+                    if (saveDestination.exists()) continue;
+                }
+
                 Bitmap bmp = BitmapFactory.decodeFile( f.getPath() , options );
                 BitmapAndName bitmapAndName = new BitmapAndName();
                 bitmapAndName.bitmap = bmp;
                 bitmapAndName.fileName = f.getName();
                 bitmaps.add( bitmapAndName );
             }
-
-            Context context = AndroidImageViewer.getAppContext();
 
             try {
                 for(BitmapAndName bmp : bitmaps){
