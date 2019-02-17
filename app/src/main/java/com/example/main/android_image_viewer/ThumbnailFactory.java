@@ -22,7 +22,7 @@ public final class ThumbnailFactory {
         task.execute( files );
     }
 
-    private class BitmapAndName{
+    private class NamedBitmap{
         public String fileName;
         public Bitmap bitmap;
     }
@@ -52,7 +52,7 @@ public final class ThumbnailFactory {
             options.inSampleSize = 8;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
 
-            ArrayList<BitmapAndName> bitmaps = new ArrayList<>();
+            ArrayList<NamedBitmap> bitmaps = new ArrayList<>();
 
             Context context = AndroidImageViewer.getAppContext();
 
@@ -65,14 +65,14 @@ public final class ThumbnailFactory {
                 }
 
                 Bitmap bmp = BitmapFactory.decodeFile( f.getPath() , options );
-                BitmapAndName bitmapAndName = new BitmapAndName();
+                NamedBitmap bitmapAndName = new NamedBitmap();
                 bitmapAndName.bitmap = bmp;
                 bitmapAndName.fileName = f.getName();
                 bitmaps.add( bitmapAndName );
             }
 
             try {
-                for(BitmapAndName bmp : bitmaps){
+                for(NamedBitmap bmp : bitmaps){
                     File destination = new File( context.getFilesDir().getPath() + "/" + bmp.fileName);
                     FileOutputStream fileOutputStream = new FileOutputStream(destination);
                     bmp.bitmap.compress(Bitmap.CompressFormat.JPEG , 30 ,  fileOutputStream);
