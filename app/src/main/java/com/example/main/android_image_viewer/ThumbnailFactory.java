@@ -17,9 +17,14 @@ import static java.lang.Boolean.valueOf;
 public final class ThumbnailFactory {
 
     public void resizeFileInDirectory( File targetDirectory ) {
-        File[] files = { targetDirectory };
+        File[] pictureFiles = getPictureFiles( targetDirectory );
         AsyncBitmapDecoder task = new AsyncBitmapDecoder(false);
-        task.execute( files );
+        task.execute( pictureFiles );
+    }
+
+    private File[] getPictureFiles( File targetDirectory ){
+        File currentDirectory = new File( targetDirectory.getPath() );
+        return currentDirectory.listFiles( new PictureFileExtraction() );
     }
 
     private class NamedBitmap{
@@ -27,7 +32,7 @@ public final class ThumbnailFactory {
         public Bitmap bitmap;
     }
 
-    class FileTypeFilter implements FilenameFilter {
+    private class PictureFileExtraction implements FilenameFilter {
         public boolean accept(File file , String name){
             if(name.endsWith(".jpg")){ return true; }
             return false;
@@ -43,16 +48,13 @@ public final class ThumbnailFactory {
         }
 
         @Override
-        protected Boolean doInBackground(File... targetDirectory){
-
-            File currentDirectory = new File( targetDirectory[0].getPath() );
-            File[] pictureFiles = currentDirectory.listFiles( new FileTypeFilter() );
+        protected Boolean doInBackground(File... pictureFiles){
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 8;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
 
-            ArrayList<NamedBitmap> bitmaps = new ArrayList<>();
+            ArrayList<NamedBitmap> namedBitmaps = new ArrayList<>();
 
             Context context = AndroidImageViewer.getAppContext();
 
@@ -68,11 +70,11 @@ public final class ThumbnailFactory {
                 NamedBitmap bitmapAndName = new NamedBitmap();
                 bitmapAndName.bitmap = bmp;
                 bitmapAndName.fileName = f.getName();
-                bitmaps.add( bitmapAndName );
+                namedBitmaps.add( bitmapAndName );
             }
 
             try {
-                for(NamedBitmap bmp : bitmaps){
+                for(NamedBitmap bmp : namedBitmaps){
                     File destination = new File( context.getFilesDir().getPath() + "/" + bmp.fileName);
                     FileOutputStream fileOutputStream = new FileOutputStream(destination);
                     bmp.bitmap.compress(Bitmap.CompressFormat.JPEG , 30 ,  fileOutputStream);
