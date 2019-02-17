@@ -28,11 +28,6 @@ public final class ThumbnailFactory {
     }
 
     private class NamedBitmap{
-        public NamedBitmap( String fileName , Bitmap bitmap ){
-            this.fileName = fileName;
-            this.bitmap = bitmap;
-        }
-
         public String fileName;
         public Bitmap bitmap;
     }
@@ -72,7 +67,10 @@ public final class ThumbnailFactory {
                 }
 
                 Bitmap bmp = BitmapFactory.decodeFile( f.getPath() , options );
-                namedBitmaps.add( new NamedBitmap( f.getName() , bmp ));
+                NamedBitmap bitmapAndName = new NamedBitmap();
+                bitmapAndName.bitmap = bmp;
+                bitmapAndName.fileName = f.getName();
+                namedBitmaps.add( bitmapAndName );
             }
 
             try {
