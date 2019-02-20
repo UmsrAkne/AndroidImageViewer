@@ -32,6 +32,12 @@ public final class ThumbnailFactory {
         public Bitmap bitmap;
     }
 
+    public File getThumbnailFile( File sourcePictureFile ){
+        Context context = AndroidImageViewer.getAppContext();
+        String thumbnailDirectoryPath = context.getFilesDir().getPath() + "/Thumbnails";
+        return new File( thumbnailDirectoryPath + sourcePictureFile.getPath());
+    }
+
     private class PictureFileExtraction implements FilenameFilter {
         public boolean accept(File file , String name){
             if(name.endsWith(".jpg")){ return true; }
